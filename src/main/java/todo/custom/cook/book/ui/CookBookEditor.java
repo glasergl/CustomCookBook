@@ -1,6 +1,9 @@
 package todo.custom.cook.book.ui;
 
 import java.awt.Container;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -9,12 +12,16 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import todo.custom.cook.book.entity.CookBook;
+import todo.custom.cook.book.entity.Recipe;
+import todo.custom.cook.book.util.Functions;
 
 public final class CookBookEditor {
     private final JFrame frame = new JFrame("Eigenes Kochbuch!");
     private final Container contentPane = frame.getContentPane();
     private final JTextField nameInput = new JTextField();
     private final JTextField authorInput = new JTextField();
+    private final Set<RecipeEditor> recipeEditors = new HashSet<>();
+    private Optional<RecipeEditor> currentReceipe = Optional.empty();
 
     public CookBookEditor() {
 	addComponents();
@@ -39,6 +46,15 @@ public final class CookBookEditor {
     }
 
     public CookBook get() {
-	return null;
+	final String name = nameInput.getText();
+	final String author = authorInput.getText();
+	if (Functions.emptyString(name) || Functions.emptyString(author) || recipeEditors.isEmpty()) {
+	    throw new IllegalStateException();
+	}
+	final Set<Recipe> recipes = new HashSet<>();
+	for (final RecipeEditor recipeEditor : recipeEditors) {
+	    recipes.add(recipeEditor.get());
+	}
+	return new CookBook(name, author, recipes);
     }
 }

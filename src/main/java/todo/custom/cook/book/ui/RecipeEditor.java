@@ -2,6 +2,7 @@ package todo.custom.cook.book.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -15,6 +16,9 @@ import todo.custom.cook.book.entity.Recipe;
 import todo.custom.cook.book.util.Functions;
 
 public final class RecipeEditor {
+    private static int idCounter = 0;
+    private final int idForHashing = idCounter++;
+
     private final JPanel recipeEditorPanel = new JPanel();
     private final JTextField nameInput;
     private final JTextField groupInput;
@@ -105,5 +109,10 @@ public final class RecipeEditor {
 	    throw new IllegalStateException();
 	}
 	return new Recipe(name, steps, duration, group, numberOfPortionsAsInteger, ingredients);
+    }
+
+    @Override
+    public int hashCode() {
+	return Objects.hash(idForHashing);
     }
 }
