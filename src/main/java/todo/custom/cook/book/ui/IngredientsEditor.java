@@ -50,6 +50,9 @@ public final class IngredientsEditor {
 	    final String amount = ingredientAmountInput.getText();
 	    if (!name.isEmpty() && !name.isBlank() && !amount.isEmpty() && !amount.isBlank()) {
 		final Ingredient ingredient = new Ingredient(name, amount);
+		if (ingredients.contains(ingredient)) {
+		    return;
+		}
 		addIngredient(ingredient);
 	    }
 	});
@@ -67,9 +70,6 @@ public final class IngredientsEditor {
     }
 
     private void addIngredient(final Ingredient ingredient) {
-	if (ingredients.contains(ingredient)) {
-	    return;
-	}
 	ingredients.add(ingredient);
 	final JPanel panel = new JPanel();
 	panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -83,12 +83,12 @@ public final class IngredientsEditor {
 	    ingredientsPanel.repaint();
 	});
 	panel.add(deleteIngredientButton);
-	ingredientNameInput.setText("");
-	ingredientAmountInput.setText("");
 	ingredientsPanel.add(panel);
 	ingredientsPanel.add(Box.createHorizontalStrut(7));
 	ingredientsPanel.revalidate();
 	ingredientsPanel.repaint();
+	ingredientNameInput.setText("");
+	ingredientAmountInput.setText("");
     }
 
     public JPanel getPanel() {
