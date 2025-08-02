@@ -1,20 +1,41 @@
 package todo.custom.cook.book.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+
+import todo.custom.cook.book.entity.CookBook;
 
 public final class CookBookEditor {
     private final JFrame frame = new JFrame("Eigenes Kochbuch!");
     private final Container contentPane = frame.getContentPane();
+    private final JTextField nameInput = new JTextField();
 
     public CookBookEditor() {
-	contentPane.add(new JLabel("Test"), BorderLayout.CENTER);
+	addComponents();
 	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	frame.setResizable(false);
 	frame.pack();
 	frame.setLocationRelativeTo(null);
 	frame.setVisible(true);
+    }
+
+    private void addComponents() {
+	contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+	contentPane.add(UICustomization.getLeftLabelledComponent(nameInput, "Name:", 10));
+	nameInput.setColumns(20);
+	
+	final RecipeEditor r = new RecipeEditor();
+	final JPanel recipeEditorPanel = r.getPanel();
+	recipeEditorPanel.setBorder(new TitledBorder("Rezept"));
+	contentPane.add(recipeEditorPanel);
+    }
+
+    public CookBook get() {
+	return null;
     }
 }
