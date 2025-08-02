@@ -16,6 +16,7 @@ public class Main {
 	Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
 	    JOptionPane.showMessageDialog(null, String.format("%s: %s", e.getClass()
 		    .getSimpleName(), e.getMessage()), "Unbehandelte Ausnahme", JOptionPane.ERROR_MESSAGE);
+	    System.exit(1);
 	});
 	final CookBookIO cookBookIO = new CookBookIO();
 	final Optional<CookBook> storedCookBook = cookBookIO.cookBookExists() ? Optional.of(cookBookIO.get()) : Optional.empty();
