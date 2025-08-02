@@ -14,6 +14,7 @@ public final class CookBookEditor {
     private final JFrame frame = new JFrame("Eigenes Kochbuch!");
     private final Container contentPane = frame.getContentPane();
     private final JTextField nameInput = new JTextField();
+    private final JTextField authorInput = new JTextField();
 
     public CookBookEditor() {
 	addComponents();
@@ -27,8 +28,10 @@ public final class CookBookEditor {
     private void addComponents() {
 	contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 	contentPane.add(UICustomization.getLeftLabelledComponent(nameInput, "Name:", 10));
-	nameInput.setColumns(20);
-	
+	contentPane.add(UICustomization.getLeftLabelledComponent(authorInput, "Autor:", 10));
+	nameInput.setColumns(30);
+	authorInput.setColumns(20);
+
 	final RecipeEditor r = new RecipeEditor();
 	final JPanel recipeEditorPanel = r.getPanel();
 	recipeEditorPanel.setBorder(new TitledBorder("Rezept"));
