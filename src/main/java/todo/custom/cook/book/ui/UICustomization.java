@@ -17,6 +17,7 @@ public class UICustomization {
 	UIManager.put("TextField.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
 	UIManager.put("Button.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
 	UIManager.put("TextArea.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+	UIManager.put("OptionPane.messageFont", new Font(Font.MONOSPACED, Font.PLAIN, 12));
     }
 
     public static JPanel getLeftLabelledComponent(final JComponent component, final String labelText, final int horizontalDistance) {
