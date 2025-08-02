@@ -1,6 +1,7 @@
 target/
 .settings/
 *.pdf
+*.json
 .classpath
 .project
 

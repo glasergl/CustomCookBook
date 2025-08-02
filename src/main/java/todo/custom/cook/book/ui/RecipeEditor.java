@@ -2,7 +2,7 @@ package todo.custom.cook.book.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -16,9 +16,6 @@ import todo.custom.cook.book.entity.Recipe;
 import todo.custom.cook.book.util.Functions;
 
 public final class RecipeEditor {
-    private static int idCounter = 0;
-    private final int idForHashing = idCounter++;
-
     private final JPanel recipeEditorPanel = new JPanel();
     private final JTextField nameInput;
     private final JTextField groupInput;
@@ -37,8 +34,8 @@ public final class RecipeEditor {
 	setupRecipePanel();
     }
 
-    public RecipeEditor() {
-	this.nameInput = new JTextField();
+    public RecipeEditor(final String recipeName) {
+	this.nameInput = new JTextField(recipeName);
 	this.groupInput = new JTextField();
 	this.stepsInput = new JTextArea();
 	this.durationInput = new JTextField();
@@ -86,7 +83,7 @@ public final class RecipeEditor {
 	return recipeEditorPanel;
     }
 
-    public Recipe get() {
+    public Optional<Recipe> get() {
 	final String name = nameInput.getText();
 	final String group = groupInput.getText();
 	final String duration = durationInput.getText();
@@ -94,25 +91,25 @@ public final class RecipeEditor {
 	final List<String> steps = getSteps(stepsInput.getText());
 	for (final String recipeAttribute : List.of(name, group, duration, numberOfPortions)) {
 	    if (Functions.emptyString(recipeAttribute)) {
-		throw new IllegalStateException();
+		return Optional.empty();
 	    }
 	}
-	if (steps.isEmpty()) {
-	    throw new IllegalStateException();
+	if (steps.isEmpty() || !Functions.isInteger(numberOfPortions)) {
+	    return Optional.empty();
 	}
 	final int numberOfPortionsAsInteger = Integer.valueOf(numberOfPortions);
 	if (numberOfPortionsAsInteger < 1) {
-	    throw new IllegalStateException();
+	    return Optional.empty();
 	}
 	final Set<Ingredient> ingredients = ingredientsEditor.getIngredients();
 	if (ingredients.isEmpty()) {
-	    throw new IllegalStateException();
+	    return Optional.empty();
 	}
-	return new Recipe(name, steps, duration, group, numberOfPortionsAsInteger, ingredients);
+	return Optional.of(new Recipe(name, steps, duration, group, numberOfPortionsAsInteger, ingredients));
     }
 
     @Override
-    public int hashCode() {
-	return Objects.hash(idForHashing);
+    public String toString() {
+	return nameInput.getText();
     }
 }
