@@ -13,10 +13,10 @@ import javax.swing.UIManager;
 
 public class UICustomization {
     public static void initialize() {
-	UIManager.put("Label.font", new Font(Font.SANS_SERIF, Font.PLAIN, 20));
-	UIManager.put("TextField.font", new Font(Font.SANS_SERIF, Font.PLAIN, 20));
-	UIManager.put("Button.font", new Font(Font.SANS_SERIF, Font.PLAIN, 20));
-	UIManager.put("TextArea.font", new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+	UIManager.put("Label.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+	UIManager.put("TextField.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+	UIManager.put("Button.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+	UIManager.put("TextArea.font", new Font(Font.SANS_SERIF, Font.PLAIN, 16));
     }
 
     public static JPanel getLeftLabelledComponent(final JComponent component, final String labelText, final int horizontalDistance) {
