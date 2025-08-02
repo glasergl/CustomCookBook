@@ -1,6 +1,8 @@
 package todo.custom.cook.book.ui;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -8,7 +10,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import todo.custom.cook.book.entity.Ingredient;
 import todo.custom.cook.book.entity.Recipe;
+import todo.custom.cook.book.util.Functions;
 
 public final class RecipeEditor {
     private final JPanel recipeEditorPanel = new JPanel();
@@ -64,12 +68,42 @@ public final class RecipeEditor {
 	return stepsAsSingleStringBuilder.toString();
     }
 
+    private List<String> getSteps(final String stepsAsSingleString) {
+	final List<String> steps = new ArrayList<>();
+	for (final String step : stepsAsSingleString.split("\n")) {
+	    if (!Functions.emptyString(step)) {
+		steps.add(step);
+	    }
+	}
+	return steps;
+    }
+
     public JPanel getPanel() {
 	return recipeEditorPanel;
     }
 
     public Recipe get() {
-	// TODO
-	return null;
+	final String name = nameInput.getText();
+	final String group = groupInput.getText();
+	final String duration = durationInput.getText();
+	final String numberOfPortions = numberOfPortionsInput.getText();
+	final List<String> steps = getSteps(stepsInput.getText());
+	for (final String recipeAttribute : List.of(name, group, duration, numberOfPortions)) {
+	    if (Functions.emptyString(recipeAttribute)) {
+		throw new IllegalStateException();
+	    }
+	}
+	if (steps.isEmpty()) {
+	    throw new IllegalStateException();
+	}
+	final int numberOfPortionsAsInteger = Integer.valueOf(numberOfPortions);
+	if (numberOfPortionsAsInteger < 1) {
+	    throw new IllegalStateException();
+	}
+	final Set<Ingredient> ingredients = ingredientsEditor.getIngredients();
+	if (ingredients.isEmpty()) {
+	    throw new IllegalStateException();
+	}
+	return new Recipe(name, steps, duration, group, numberOfPortionsAsInteger, ingredients);
     }
 }
