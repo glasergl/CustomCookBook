@@ -13,6 +13,10 @@ public final class CookBookIO {
     private final Path cookBookFilePath = Path.of("./cookBook.json");
     private final Gson jsonParser = new Gson();
 
+    public boolean cookBookExists() {
+	return Files.exists(cookBookFilePath);
+    }
+
     public CookBook get() throws IOException {
 	final String jsonContent = Files.readString(cookBookFilePath);
 	return jsonParser.fromJson(jsonContent, CookBook.class);

@@ -23,7 +23,21 @@ public final class CookBookEditor {
     private final Set<RecipeEditor> recipeEditors = new HashSet<>();
     private Optional<RecipeEditor> currentReceipe = Optional.empty();
 
+    public CookBookEditor(final CookBook cookBook) {
+	super();
+	nameInput.setText(cookBook.name());
+	authorInput.setText(cookBook.author());
+	for (final Recipe recipe : cookBook.recipes()) {
+	    recipeEditors.add(new RecipeEditor(recipe));
+	}
+	setup();
+    }
+
     public CookBookEditor() {
+	setup();
+    }
+
+    private void setup() {
 	addComponents();
 	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	frame.setResizable(false);
