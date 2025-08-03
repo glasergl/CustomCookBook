@@ -3,6 +3,7 @@ package todo.custom.cook.book.ui;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,9 @@ import javax.swing.JTextField;
 import todo.custom.cook.book.entity.CookBook;
 import todo.custom.cook.book.entity.Recipe;
 import todo.custom.cook.book.io.CookBookIO;
+import todo.custom.cook.book.latex.CookBookToLatex;
 import todo.custom.cook.book.util.Functions;
+import todo.jlatex.GeneratePdf;
 
 public final class CookBookEditor {
     private final JFrame frame = new JFrame("Eigenes Kochbuch!");
@@ -28,8 +31,9 @@ public final class CookBookEditor {
     private final JTextField nameInput = new JTextField();
     private final JTextField authorInput = new JTextField();
     private final JComboBox<RecipeEditor> recipeSelector = new JComboBox<>();
-    private final JButton addEmptyRecipeButton = new JButton("+");
+    private final JButton addEmptyRecipeButton = new JButton("Neues Rezept");
     private final JButton saveButton = new JButton("Speichern");
+    private final JButton exportToPdfButton = new JButton("PDF Exportieren");
     private final JPanel recipePanel = new JPanel(new BorderLayout());
 
     public CookBookEditor(final CookBook cookBook) {
@@ -61,8 +65,11 @@ public final class CookBookEditor {
 	contentPane.add(UICustomization.getLeftLabelledComponent(nameInput, "Name:", 10));
 	contentPane.add(UICustomization.getLeftLabelledComponent(authorInput, "Autor:", 10));
 	contentPane.add(UICustomization.getLeftLabelledComponent(recipeSelector, "Rezepte:", 10));
-	contentPane.add(addEmptyRecipeButton);
-	contentPane.add(saveButton);
+	final JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	buttonRow.add(addEmptyRecipeButton);
+	buttonRow.add(saveButton);
+	buttonRow.add(exportToPdfButton);
+	contentPane.add(buttonRow);
 	setupButtons();
 	nameInput.setColumns(30);
 	authorInput.setColumns(20);
@@ -78,16 +85,30 @@ public final class CookBookEditor {
 	    recipePanel.repaint();
 	});
 	addEmptyRecipeButton.addActionListener(click -> {
-	    recipeSelector.addItem(new RecipeEditor("Neues Rezept"));
+	    final RecipeEditor recipeEditor = new RecipeEditor("Neues Rezept");
+	    recipeSelector.addItem(recipeEditor);
+	    recipeSelector.setSelectedItem(recipeEditor);
 	});
 	saveButton.addActionListener(click -> {
 	    // TODO use SwingWorker
 	    final CookBookIO cookBookIO = new CookBookIO();
 	    final Optional<CookBook> cookBook = get();
 	    if (cookBook.isPresent()) {
+		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
 		cookBookIO.store(cookBook.get());
+		new GeneratePdf(c.get());
 	    } else {
-		JOptionPane.showMessageDialog(frame, "Bitte füge für jedes Feld einen erlaubten Wert hinzu und probiere erneut", "Speichern nicht möglich", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, "Bitte füge jedem Feld einen erlaubten Wert hinzu und probiere erneut", "Speichern nicht möglich", JOptionPane.ERROR_MESSAGE);
+	    }
+	});
+	exportToPdfButton.addActionListener(click -> {
+	    saveButton.doClick();
+	    final Optional<CookBook> cookBook = get();
+	    if (cookBook.isPresent()) {
+		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
+		new GeneratePdf(c.get());
+	    } else {
+		JOptionPane.showMessageDialog(frame, "Bitte füge jedem Feld einen erlaubten Wert hinzu und probiere erneut", "Exportieren nicht möglich", JOptionPane.ERROR_MESSAGE);
 	    }
 	});
     }
