@@ -1,6 +1,7 @@
 package todo.custom.cook.book.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -42,10 +43,16 @@ public final class CookBookEditor {
 	super();
 	nameInput.setText(cookBook.name());
 	authorInput.setText(cookBook.author());
-	for (final Recipe recipe : cookBook.recipes()) {
+	final List<Recipe> sortedRecipes = new ArrayList<>(cookBook.recipes());
+	sortedRecipes.sort((r1, r2) -> {
+	    return r1.name()
+		    .compareTo(r2.name());
+	});
+	for (final Recipe recipe : sortedRecipes) {
 	    recipeSelector.addItem(new RecipeEditor(recipe));
 	}
 	setup();
+	recipeSelector.setSelectedIndex(0);
     }
 
     public CookBookEditor() {
@@ -53,10 +60,10 @@ public final class CookBookEditor {
     }
 
     private void setup() {
-	recipePanel.setPreferredSize(new Dimension(700, 700));
+	recipePanel.setPreferredSize(new RecipeEditor("").getPanel()
+		.getPreferredSize());
 	addComponents();
 	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	frame.setResizable(false);
 	frame.pack();
 	frame.setLocationRelativeTo(null);
 	frame.setVisible(true);
@@ -73,8 +80,13 @@ public final class CookBookEditor {
 	buttonRow.add(exportToPdfButton);
 	contentPane.add(buttonRow);
 	setupButtons();
-	nameInput.setColumns(30);
+	nameInput.setColumns(40);
 	authorInput.setColumns(20);
+
+	final JPanel separator = new JPanel();
+	separator.setBackground(Color.LIGHT_GRAY);
+	separator.setPreferredSize(new Dimension(1, 1)); // width will be set by layout, 2 is desired height
+	contentPane.add(separator);
 	contentPane.add(recipePanel);
     }
 

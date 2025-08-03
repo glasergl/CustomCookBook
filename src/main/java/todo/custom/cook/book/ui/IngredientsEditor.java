@@ -11,7 +11,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import todo.custom.cook.book.entity.Ingredient;
 
@@ -57,7 +59,11 @@ public final class IngredientsEditor {
 	    }
 	});
 	ingredientsEditorPanel.setLayout(new BoxLayout(ingredientsEditorPanel, BoxLayout.Y_AXIS));
-	ingredientsEditorPanel.add(ingredientsPanel);
+	ingredientsPanel.setPreferredSize(new Dimension(500, 500));
+	final JScrollPane scrollableIngredientsPanel = new JScrollPane(ingredientsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	scrollableIngredientsPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+	scrollableIngredientsPanel.setPreferredSize(new Dimension(500, 150));
+	ingredientsEditorPanel.add(scrollableIngredientsPanel);
 	ingredientsEditorPanel.add(createIngredientsControlPanel());
     }
 

@@ -1,5 +1,6 @@
 package todo.custom.cook.book.ui;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import todo.custom.cook.book.entity.Ingredient;
 import todo.custom.cook.book.entity.Recipe;
@@ -52,20 +54,19 @@ public final class RecipeEditor {
 	recipeEditorPanel.add(UICustomization.getLeftLabelledComponent(durationInput, "Dauer:", 5));
 	recipeEditorPanel.add(ingredientsEditor.getPanel());
 	final JScrollPane scrollapeStepsInput = new JScrollPane(stepsInput, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-//	recipeEditorPanel.add(UICustomization.getAboveLabelledComponent(scrollapeStepsInput, "Schritte:", 5));
+	scrollapeStepsInput.setBorder(new EmptyBorder(10, 10, 10, 10));
+	scrollapeStepsInput.setPreferredSize(new Dimension(1200, 400));
 	recipeEditorPanel.add(scrollapeStepsInput);
-	nameInput.setColumns(20);
-	groupInput.setColumns(9);
-	durationInput.setColumns(9);
-	numberOfPortionsInput.setColumns(9);
-	stepsInput.setColumns(50);
-	stepsInput.setRows(15);
+	nameInput.setColumns(25);
+	groupInput.setColumns(25);
+	durationInput.setColumns(15);
+	numberOfPortionsInput.setColumns(25);
     }
 
     private String getStepsAsString(final List<String> steps) {
 	final StringBuilder stepsAsSingleStringBuilder = new StringBuilder();
 	for (final String step : steps) {
-	    stepsAsSingleStringBuilder.append(step + "\n");
+	    stepsAsSingleStringBuilder.append(step + "\n\n");
 	}
 	return stepsAsSingleStringBuilder.toString();
     }
