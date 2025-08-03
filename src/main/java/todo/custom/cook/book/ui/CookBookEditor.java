@@ -102,7 +102,6 @@ public final class CookBookEditor {
 	    }
 	});
 	exportToPdfButton.addActionListener(click -> {
-	    saveButton.doClick();
 	    final Optional<CookBook> cookBook = get();
 	    if (cookBook.isPresent()) {
 		final CookBookToLatex c = new CookBookToLatex(cookBook.get());

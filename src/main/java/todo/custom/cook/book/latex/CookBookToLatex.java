@@ -70,7 +70,7 @@ public final class CookBookToLatex {
 		.beginEnvironment("flushleft")
 		.beginEnvironment("tabular", "@{}ll@{}")
 		.line(String.format("\\textit{Zubereitungsdauer}&%s\\\\", recipe.duration()))
-		.line(String.format("\\textit{Portionen}&%d\\\\", recipe.numberOfPortions()))
+		.line(String.format("\\textit{Portionen}&%s\\\\", recipe.numberOfPortions()))
 		.line(String.format("\\textit{Zutaten}&"))
 		.beginEnvironment("tabular", "@{}rl@{}");
 	final List<Ingredient> sortedIngredients = new ArrayList<>(recipe.ingredients());

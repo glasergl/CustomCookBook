@@ -56,7 +56,7 @@ public final class RecipeEditor {
 	nameInput.setColumns(20);
 	groupInput.setColumns(9);
 	durationInput.setColumns(9);
-	numberOfPortionsInput.setColumns(3);
+	numberOfPortionsInput.setColumns(9);
 	stepsInput.setColumns(50);
 	stepsInput.setRows(15);
     }
@@ -94,18 +94,14 @@ public final class RecipeEditor {
 		return Optional.empty();
 	    }
 	}
-	if (steps.isEmpty() || !Functions.isInteger(numberOfPortions)) {
-	    return Optional.empty();
-	}
-	final int numberOfPortionsAsInteger = Integer.valueOf(numberOfPortions);
-	if (numberOfPortionsAsInteger < 1) {
+	if (steps.isEmpty() || numberOfPortions.isEmpty() || numberOfPortions.isBlank()) {
 	    return Optional.empty();
 	}
 	final Set<Ingredient> ingredients = ingredientsEditor.getIngredients();
 	if (ingredients.isEmpty()) {
 	    return Optional.empty();
 	}
-	return Optional.of(new Recipe(name, steps, duration, group, numberOfPortionsAsInteger, ingredients));
+	return Optional.of(new Recipe(name, steps, duration, group, numberOfPortions, ingredients));
     }
 
     @Override
