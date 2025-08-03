@@ -170,7 +170,7 @@ public final class CookBookEditor {
 	    final Optional<CookBook> cookBook = CookBookEditor.this.get();
 	    if (cookBook.isPresent()) {
 		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
-		new GeneratePdf(c.get());
+		new GeneratePdf(c.get(), 10L);
 	    }
 	    return cookBook.isPresent();
 	}
