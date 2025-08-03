@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -63,6 +65,11 @@ public final class CookBookEditor {
 	recipePanel.setPreferredSize(new RecipeEditor("").getPanel()
 		.getPreferredSize());
 	addComponents();
+	try {
+	    frame.setIconImage(ImageIO.read(getClass().getResourceAsStream("/CookBookIcon.png")));
+	} catch (final IOException e) {
+	    e.printStackTrace();
+	}
 	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	frame.pack();
 	frame.setLocationRelativeTo(null);
