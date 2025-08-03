@@ -52,7 +52,8 @@ public final class RecipeEditor {
 	recipeEditorPanel.add(UICustomization.getLeftLabelledComponent(durationInput, "Dauer:", 5));
 	recipeEditorPanel.add(ingredientsEditor.getPanel());
 	final JScrollPane scrollapeStepsInput = new JScrollPane(stepsInput, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-	recipeEditorPanel.add(UICustomization.getAboveLabelledComponent(scrollapeStepsInput, "Schritte:", 5));
+//	recipeEditorPanel.add(UICustomization.getAboveLabelledComponent(scrollapeStepsInput, "Schritte:", 5));
+	recipeEditorPanel.add(scrollapeStepsInput);
 	nameInput.setColumns(20);
 	groupInput.setColumns(9);
 	durationInput.setColumns(9);
@@ -95,6 +96,7 @@ public final class RecipeEditor {
 	    }
 	}
 	if (steps.isEmpty() || numberOfPortions.isEmpty() || numberOfPortions.isBlank()) {
+
 	    return Optional.empty();
 	}
 	final Set<Ingredient> ingredients = ingredientsEditor.getIngredients();

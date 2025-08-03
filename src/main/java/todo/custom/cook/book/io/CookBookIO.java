@@ -30,10 +30,9 @@ public final class CookBookIO {
 	try {
 	    final String jsonContent = jsonParser.toJson(cookBook);
 	    if (cookBookExists()) {
-		Files.writeString(cookBookFilePath, jsonContent, StandardOpenOption.WRITE);
-	    } else {
-		Files.writeString(cookBookFilePath, jsonContent, StandardOpenOption.CREATE_NEW);
+		Files.delete(cookBookFilePath);
 	    }
+	    Files.writeString(cookBookFilePath, jsonContent, StandardOpenOption.CREATE_NEW);
 	} catch (final IOException e) {
 	    throw new IllegalStateException("Unabel to store cook book to file system", e);
 	}

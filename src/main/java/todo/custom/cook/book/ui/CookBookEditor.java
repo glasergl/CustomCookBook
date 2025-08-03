@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 import todo.custom.cook.book.entity.CookBook;
 import todo.custom.cook.book.entity.Recipe;
@@ -90,25 +92,10 @@ public final class CookBookEditor {
 	    recipeSelector.setSelectedItem(recipeEditor);
 	});
 	saveButton.addActionListener(click -> {
-	    // TODO use SwingWorker
-	    final CookBookIO cookBookIO = new CookBookIO();
-	    final Optional<CookBook> cookBook = get();
-	    if (cookBook.isPresent()) {
-		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
-		cookBookIO.store(cookBook.get());
-		new GeneratePdf(c.get());
-	    } else {
-		JOptionPane.showMessageDialog(frame, "Bitte füge jedem Feld einen erlaubten Wert hinzu und probiere erneut", "Speichern nicht möglich", JOptionPane.ERROR_MESSAGE);
-	    }
+	    new SaveCookBook();
 	});
 	exportToPdfButton.addActionListener(click -> {
-	    final Optional<CookBook> cookBook = get();
-	    if (cookBook.isPresent()) {
-		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
-		new GeneratePdf(c.get());
-	    } else {
-		JOptionPane.showMessageDialog(frame, "Bitte füge jedem Feld einen erlaubten Wert hinzu und probiere erneut", "Exportieren nicht möglich", JOptionPane.ERROR_MESSAGE);
-	    }
+	    new ExportPdf();
 	});
     }
 
@@ -136,5 +123,73 @@ public final class CookBookEditor {
 	    recipeEditors.add(recipeSelector.getItemAt(i));
 	}
 	return recipeEditors;
+    }
+
+    private final class SaveCookBook extends SwingWorker<Boolean, Void> {
+	private SaveCookBook() {
+	    execute();
+	}
+
+	@Override
+	public Boolean doInBackground() throws Exception {
+	    saveButton.setEnabled(false);
+	    final CookBookIO cookBookIO = new CookBookIO();
+	    final Optional<CookBook> cookBook = CookBookEditor.this.get();
+	    if (cookBook.isPresent()) {
+		cookBookIO.store(cookBook.get());
+	    }
+	    return cookBook.isPresent();
+	}
+
+	@Override
+	public void done() {
+	    try {
+		final boolean saveSuccessful = get();
+		if (!saveSuccessful) {
+		    JOptionPane.showMessageDialog(frame, "Bitte füge jedem Feld einen erlaubten Wert hinzu und probiere erneut", "Speichern nicht möglich", JOptionPane.ERROR_MESSAGE);
+		}
+	    } catch (final InterruptedException | ExecutionException e) {
+		/*
+		 * not reachable, because done() is only called after doInBackground is
+		 * finished, i.e., get() of SwingWorker doesn't block
+		 */
+	    } finally {
+		saveButton.setEnabled(true);
+	    }
+	}
+    }
+
+    private final class ExportPdf extends SwingWorker<Boolean, Void> {
+	private ExportPdf() {
+	    execute();
+	}
+
+	@Override
+	public Boolean doInBackground() throws Exception {
+	    exportToPdfButton.setEnabled(false);
+	    final Optional<CookBook> cookBook = CookBookEditor.this.get();
+	    if (cookBook.isPresent()) {
+		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
+		new GeneratePdf(c.get());
+	    }
+	    return cookBook.isPresent();
+	}
+
+	@Override
+	public void done() {
+	    try {
+		final boolean exportSuccessful = get();
+		if (!exportSuccessful) {
+		    JOptionPane.showMessageDialog(frame, "Bitte füge jedem Feld einen erlaubten Wert hinzu und probiere erneut", "Exportieren nicht möglich", JOptionPane.ERROR_MESSAGE);
+		}
+	    } catch (final InterruptedException | ExecutionException e) {
+		/*
+		 * not reachable, because done() is only called after doInBackground is
+		 * finished, i.e., get() of SwingWorker doesn't block
+		 */
+	    } finally {
+		exportToPdfButton.setEnabled(true);
+	    }
+	}
     }
 }
