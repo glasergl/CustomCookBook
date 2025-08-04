@@ -188,8 +188,8 @@ public final class CookBookEditor {
 	    exportToPdfButton.setEnabled(false);
 	    final Optional<CookBook> cookBook = CookBookEditor.this.get();
 	    if (cookBook.isPresent()) {
-		final CookBookToLatex c = new CookBookToLatex(cookBook.get());
-		new GeneratePdf(c.get(), 10L);
+		final CookBookToLatex cookBookToLateX = new CookBookToLatex(cookBook.get());
+		new GeneratePdf(cookBookToLateX.get());
 	    }
 	    return cookBook.isPresent();
 	}

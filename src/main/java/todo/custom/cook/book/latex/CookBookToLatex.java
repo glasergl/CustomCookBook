@@ -11,8 +11,9 @@ import java.util.Set;
 import todo.custom.cook.book.entity.CookBook;
 import todo.custom.cook.book.entity.Ingredient;
 import todo.custom.cook.book.entity.Recipe;
-import todo.jlatex.LatexCommand;
 import todo.jlatex.LatexDocument;
+import static todo.jlatex.LatexLine.f;
+import static todo.jlatex.LatexCommand.c;
 
 public final class CookBookToLatex {
     private final LatexDocument latexDocument;
@@ -35,21 +36,26 @@ public final class CookBookToLatex {
 		.usePackage("fontenc", "T1")
 		.usePackage("lmodern")
 		.usePackage("enumitem")
-		.line(LatexCommand.get("title", cookBook.name()))
-		.line(LatexCommand.get("author", cookBook.author()))
-		.line(LatexCommand.get("setlength", "\\parindent", "0cm"));
+		.usePackage("makecell")
+		.usePackage("tikz")
+		.line(c("title", cookBook.name()))
+		.line(c("author", cookBook.author()))
+		.line(c("setlength", "\\parindent", "0cm"));
+	formatChapterAndSection();
     }
 
     private void addTitlePage() {
-	latexDocument.line(LatexCommand.get("maketitle"))
-		.line(LatexCommand.get("tableofcontents"));
+	latexDocument.line(c("frontmatter"))
+		.line(c("maketitle"))
+		.line(c("tableofcontents"))
+		.line(c("mainmatter"));
     }
 
     private void addRecipes() {
 	final List<String> sortedGroupNames = new ArrayList<>(recipesByGroupName.keySet());
 	Collections.sort(sortedGroupNames);
 	for (final String groupName : sortedGroupNames) {
-	    latexDocument.line(LatexCommand.get("chapter", groupName));
+	    latexDocument.line(c("chapter", groupName));
 	    addRecipesOfGroup(groupName);
 	}
     }
@@ -66,12 +72,12 @@ public final class CookBookToLatex {
     }
 
     private void addRecipe(final Recipe recipe) {
-	latexDocument.line(LatexCommand.get("section", recipe.name()))
+	latexDocument.line(c("section", recipe.name()))
 		.beginEnvironment("flushleft")
 		.beginEnvironment("tabular", "@{}ll@{}")
-		.line(String.format("\\textit{Zubereitungsdauer}&%s\\\\", recipe.duration()))
-		.line(String.format("\\textit{Portionen}&%s\\\\", recipe.numberOfPortions()))
-		.line(String.format("\\textit{Zutaten}&"))
+		.line(f("%&%\\\\", c("textit", "Zubereitungsdauer"), f(recipe.duration())))
+		.line(f("%&%\\\\", c("textit", "Portionen"), f(recipe.numberOfPortions())))
+		.line(f("%&", c("textit", "Zutaten")))
 		.beginEnvironment("tabular", "@{}rl@{}");
 	final List<Ingredient> sortedIngredients = new ArrayList<>(recipe.ingredients());
 	sortedIngredients.sort((i1, i2) -> {
@@ -83,14 +89,15 @@ public final class CookBookToLatex {
 	}
 	latexDocument.endEnvironment("tabular")
 		.endEnvironment("tabular")
-		.endEnvironment("flushleft")
-		.line("\\textit{Schritte}")
+		.endEnvironment("flushleft");
+	addSeparator();
+	latexDocument.line("\\textit{Zubereitungsschritte}")
 		.beginEnvironment("enumerate");
 	for (final String step : recipe.steps()) {
 	    latexDocument.line(String.format("\\item %s", step));
 	}
 	latexDocument.endEnvironment("enumerate")
-		.line(LatexCommand.get("newpage"));
+		.line(c("newpage"));
     }
 
     private Map<String, Set<Recipe>> orderByGroupName() {
@@ -107,5 +114,33 @@ public final class CookBookToLatex {
 
     public LatexDocument get() {
 	return latexDocument;
+    }
+
+    private void formatChapterAndSection() {
+	latexDocument.line("\\setkomafont{chapter}{\\Huge\\fontfamily{pzc}\\selectfont}")
+		.line("\\renewcommand*{\\chapterformat}{%")
+		.line("\\centering\\chaptername~\\thechapter\\par\\vspace{1ex}%")
+		.line("}")
+		.line("\\renewcommand*{\\chapterlinesformat}[3]{%")
+		.line("\\centering #2#3%")
+		.line("}");
+    }
+
+    private void addSeparator() {
+	latexDocument.line("\\begin{center}")
+		.line("\\begin{tikzpicture}")
+		.line("\\draw (-4,0) -- (-0.9,0);")
+		.line("\\draw (0.9,0) -- (4,0);")
+		.line("\\node at (0,0) {")
+		.line("\\begin{tikzpicture}[scale=0.12]")
+		.line("\\foreach \\angle in {45, 135, 225, 315} {")
+		.line("\\draw[draw=none, fill=green!60!black] (0,0) ++(\\angle:1.0) circle (0.75);")
+		.line("}")
+		.line("\\fill[draw=none, fill=green!70!black] (0,0) circle (0.25);")
+		.line("\\end{tikzpicture}")
+		.line("};")
+		.line("\\end{tikzpicture}")
+		.line("\\end{center}");
+
     }
 }
