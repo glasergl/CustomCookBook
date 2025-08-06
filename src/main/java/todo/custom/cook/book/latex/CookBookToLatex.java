@@ -43,6 +43,19 @@ public final class CookBookToLatex {
 	formatChapterAndSection();
     }
 
+    private void formatChapterAndSection() {
+	latexDocument.format("""
+		\\setkomafont{chapter}{\\fontsize{50}{60}\\selectfont\\fontfamily{pzc}\\selectfont}
+		\\renewcommand*{\\chapterformat}{%%
+		\\centering\\chaptername~\\thechapter\\par\\vspace{0.1cm}%%
+		}
+		\\renewcommand*{\\chapterlinesformat}[3]{%%
+		\\centering #2#3%%
+		}
+					""");
+	latexDocument.line(command("renewcommand*", "\\chapterheadstartvskip", command("vspace*", "0cm")));
+    }
+
     private void addTitlePage() {
 	latexDocument.line(command("frontmatter"))
 		.line(command("maketitle"))
@@ -99,34 +112,6 @@ public final class CookBookToLatex {
 		.line(command("newpage"));
     }
 
-    private Map<String, Set<Recipe>> orderByGroupName() {
-	final Map<String, Set<Recipe>> map = new HashMap<>();
-	for (final Recipe recipe : cookBook.recipes()) {
-	    if (!map.containsKey(recipe.group())) {
-		map.put(recipe.group(), new HashSet<>());
-	    }
-	    final Set<Recipe> recipesOfSameGroup = map.get(recipe.group());
-	    recipesOfSameGroup.add(recipe);
-	}
-	return map;
-    }
-
-    public LatexDocument get() {
-	return latexDocument;
-    }
-
-    private void formatChapterAndSection() {
-	latexDocument.format("""
-		\\setkomafont{chapter}{\\fontsize{50}{60}\\selectfont\\fontfamily{pzc}\\selectfont}
-		\\renewcommand*{\\chapterformat}{%%
-		\\centering\\chaptername~\\thechapter\\par\\vspace{1ex}%%
-		}
-		\\renewcommand*{\\chapterlinesformat}[3]{%%
-		\\centering #2#3%%
-		}
-					""");
-    }
-
     private void addSeparator() {
 	latexDocument.format("""
 		\\begin{center}
@@ -144,5 +129,21 @@ public final class CookBookToLatex {
 		\\end{tikzpicture}
 		\\end{center}
 					""");
+    }
+
+    private Map<String, Set<Recipe>> orderByGroupName() {
+	final Map<String, Set<Recipe>> map = new HashMap<>();
+	for (final Recipe recipe : cookBook.recipes()) {
+	    if (!map.containsKey(recipe.group())) {
+		map.put(recipe.group(), new HashSet<>());
+	    }
+	    final Set<Recipe> recipesOfSameGroup = map.get(recipe.group());
+	    recipesOfSameGroup.add(recipe);
+	}
+	return map;
+    }
+
+    public LatexDocument get() {
+	return latexDocument;
     }
 }

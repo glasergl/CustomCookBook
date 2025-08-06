@@ -92,7 +92,7 @@ public final class CookBookEditor {
 
 	final JPanel separator = new JPanel();
 	separator.setBackground(Color.LIGHT_GRAY);
-	separator.setPreferredSize(new Dimension(1, 1)); // width will be set by layout, 2 is desired height
+	separator.setPreferredSize(new Dimension(1, 1)); // width will be set by layout, 1 is desired height
 	contentPane.add(separator);
 	contentPane.add(recipePanel);
     }
@@ -188,8 +188,8 @@ public final class CookBookEditor {
 	    exportToPdfButton.setEnabled(false);
 	    final Optional<CookBook> cookBook = CookBookEditor.this.get();
 	    if (cookBook.isPresent()) {
-		final CookBookToLatex cookBookToLateX = new CookBookToLatex(cookBook.get());
-		new GeneratePdf(cookBookToLateX.get());
+		final CookBookToLatex cookBookToLatex = new CookBookToLatex(cookBook.get());
+		new GeneratePdf(cookBookToLatex.get());
 	    }
 	    return cookBook.isPresent();
 	}
