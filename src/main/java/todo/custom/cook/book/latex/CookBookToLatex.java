@@ -12,8 +12,7 @@ import todo.custom.cook.book.entity.CookBook;
 import todo.custom.cook.book.entity.Ingredient;
 import todo.custom.cook.book.entity.Recipe;
 import todo.jlatex.LatexDocument;
-import static todo.jlatex.LatexLine.f;
-import static todo.jlatex.LatexCommand.c;
+import static todo.jlatex.LatexCommand.command;
 
 public final class CookBookToLatex {
     private final LatexDocument latexDocument;
@@ -38,24 +37,24 @@ public final class CookBookToLatex {
 		.usePackage("enumitem")
 		.usePackage("makecell")
 		.usePackage("tikz")
-		.line(c("title", cookBook.name()))
-		.line(c("author", cookBook.author()))
-		.line(c("setlength", "\\parindent", "0cm"));
+		.line(command("title", cookBook.name()))
+		.line(command("author", cookBook.author()))
+		.line(command("setlength", "\\parindent", "0cm"));
 	formatChapterAndSection();
     }
 
     private void addTitlePage() {
-	latexDocument.line(c("frontmatter"))
-		.line(c("maketitle"))
-		.line(c("tableofcontents"))
-		.line(c("mainmatter"));
+	latexDocument.line(command("frontmatter"))
+		.line(command("maketitle"))
+		.line(command("tableofcontents"))
+		.line(command("mainmatter"));
     }
 
     private void addRecipes() {
 	final List<String> sortedGroupNames = new ArrayList<>(recipesByGroupName.keySet());
 	Collections.sort(sortedGroupNames);
 	for (final String groupName : sortedGroupNames) {
-	    latexDocument.line(c("chapter", groupName));
+	    latexDocument.line(command("chapter", groupName));
 	    addRecipesOfGroup(groupName);
 	}
     }
@@ -72,12 +71,12 @@ public final class CookBookToLatex {
     }
 
     private void addRecipe(final Recipe recipe) {
-	latexDocument.line(c("section", recipe.name()))
+	latexDocument.line(command("section", recipe.name()))
 		.beginEnvironment("flushleft")
 		.beginEnvironment("tabular", "@{}ll@{}")
-		.line(f("%&%\\\\", c("textit", "Zubereitungsdauer"), f(recipe.duration())))
-		.line(f("%&%\\\\", c("textit", "Portionen"), f(recipe.numberOfPortions())))
-		.line(f("%&", c("textit", "Zutaten")))
+		.format("%&%\\\\", command("textit", "Zubereitungsdauer"), recipe.duration())
+		.format("%&%\\\\", command("textit", "Portionen"), recipe.numberOfPortions())
+		.format("%&", command("textit", "Zutaten"))
 		.beginEnvironment("tabular", "@{}rl@{}");
 	final List<Ingredient> sortedIngredients = new ArrayList<>(recipe.ingredients());
 	sortedIngredients.sort((i1, i2) -> {
@@ -85,19 +84,19 @@ public final class CookBookToLatex {
 		    .compareTo(i2.name());
 	});
 	for (final Ingredient ingredient : sortedIngredients) {
-	    latexDocument.line(String.format("%s & %s\\\\", ingredient.amount(), ingredient.name()));
+	    latexDocument.format("% & %\\\\", ingredient.amount(), ingredient.name());
 	}
 	latexDocument.endEnvironment("tabular")
 		.endEnvironment("tabular")
 		.endEnvironment("flushleft");
 	addSeparator();
-	latexDocument.line("\\textit{Zubereitungsschritte}")
+	latexDocument.format("\\textit{Zubereitungsschritte}")
 		.beginEnvironment("enumerate");
 	for (final String step : recipe.steps()) {
-	    latexDocument.line(String.format("\\item %s", step));
+	    latexDocument.format("% %", command("item"), step);
 	}
 	latexDocument.endEnvironment("enumerate")
-		.line(c("newpage"));
+		.line(command("newpage"));
     }
 
     private Map<String, Set<Recipe>> orderByGroupName() {
@@ -117,30 +116,33 @@ public final class CookBookToLatex {
     }
 
     private void formatChapterAndSection() {
-	latexDocument.line("\\setkomafont{chapter}{\\Huge\\fontfamily{pzc}\\selectfont}")
-		.line("\\renewcommand*{\\chapterformat}{%")
-		.line("\\centering\\chaptername~\\thechapter\\par\\vspace{1ex}%")
-		.line("}")
-		.line("\\renewcommand*{\\chapterlinesformat}[3]{%")
-		.line("\\centering #2#3%")
-		.line("}");
+	latexDocument.format("""
+		\\setkomafont{chapter}{\\fontsize{50}{60}\\selectfont\\fontfamily{pzc}\\selectfont}
+		\\renewcommand*{\\chapterformat}{%%
+		\\centering\\chaptername~\\thechapter\\par\\vspace{1ex}%%
+		}
+		\\renewcommand*{\\chapterlinesformat}[3]{%%
+		\\centering #2#3%%
+		}
+					""");
     }
 
     private void addSeparator() {
-	latexDocument.line("\\begin{center}")
-		.line("\\begin{tikzpicture}")
-		.line("\\draw (-4,0) -- (-0.9,0);")
-		.line("\\draw (0.9,0) -- (4,0);")
-		.line("\\node at (0,0) {")
-		.line("\\begin{tikzpicture}[scale=0.12]")
-		.line("\\foreach \\angle in {45, 135, 225, 315} {")
-		.line("\\draw[draw=none, fill=green!60!black] (0,0) ++(\\angle:1.0) circle (0.75);")
-		.line("}")
-		.line("\\fill[draw=none, fill=green!70!black] (0,0) circle (0.25);")
-		.line("\\end{tikzpicture}")
-		.line("};")
-		.line("\\end{tikzpicture}")
-		.line("\\end{center}");
-
+	latexDocument.format("""
+		\\begin{center}
+		\\begin{tikzpicture}
+		\\draw (-4,0) -- (-0.9,0);
+		\\draw (0.9,0) -- (4,0);
+		\\node at (0,0) {
+		\\begin{tikzpicture}[scale=0.12]
+		\\foreach \\angle in {45, 135, 225, 315} {
+		\\draw[draw=none, fill=green!60!black] (0,0) ++(\\angle:1.0) circle (0.75);
+		}
+		\\fill[draw=none, fill=green!70!black] (0,0) circle (0.25);
+		\\end{tikzpicture}
+		};
+		\\end{tikzpicture}
+		\\end{center};
+					""");
     }
 }
