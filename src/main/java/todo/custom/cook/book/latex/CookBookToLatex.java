@@ -142,7 +142,7 @@ public final class CookBookToLatex {
 		\\end{tikzpicture}
 		};
 		\\end{tikzpicture}
-		\\end{center};
+		\\end{center}
 					""");
     }
 }
