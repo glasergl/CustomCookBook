@@ -40,6 +40,8 @@ public final class CookBookToLatex {
 		.usePackage("enumitem")
 		.usePackage("makecell")
 		.usePackage("tikz")
+		.usePackage("longtable")
+		.usePackage("graphicx")
 		.line(command("title", cookBook.name()))
 		.line(command("author", cookBook.author()))
 		.line(command("setlength", "\\parindent", "0cm"));
@@ -153,12 +155,14 @@ public final class CookBookToLatex {
 
     private void addRecipe(final Recipe recipe) {
 	latexDocument.line(command("section", recipe.name()))
-		.beginEnvironment("flushleft")
-		.beginEnvironment("tabular", "@{}ll@{}")
-		.format("%&%\\\\", command("textit", "Zubereitungsdauer"), recipe.duration())
-		.format("%&%\\\\", command("textit", "Portionen"), recipe.numberOfPortions())
-		.format("%&", command("textit", "Zutaten"))
-		.beginEnvironment("tabular", "@{}rl@{}");
+		.format("%: %\\\\", command("textit", "Zubereitungsdauer"), recipe.duration())
+		.format("%: %\\\\", command("textit", "Portionen"), recipe.numberOfPortions())
+		.format("%:", command("textit", "Zutaten"))
+		.beginEnvironment("longtable", "@{}rl@{}")
+		.line(command("hline"))
+		.format("%\\\\", command("multicolumn", 2, "r", command("textit", "Weiter auf nächster Seite")))
+		.line(command("endfoot"))
+		.line(command("endlastfoot"));
 	final List<Ingredient> sortedIngredients = new ArrayList<>(recipe.ingredients());
 	sortedIngredients.sort((i1, i2) -> {
 	    return i1.name()
@@ -167,9 +171,7 @@ public final class CookBookToLatex {
 	for (final Ingredient ingredient : sortedIngredients) {
 	    latexDocument.format("% & %\\\\", ingredient.amount(), ingredient.name());
 	}
-	latexDocument.endEnvironment("tabular")
-		.endEnvironment("tabular")
-		.endEnvironment("flushleft");
+	latexDocument.endEnvironment("longtable");
 	addSeparator();
 	latexDocument.format("\\textit{Zubereitungsschritte}")
 		.beginEnvironment("enumerate");
