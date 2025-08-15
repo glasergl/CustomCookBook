@@ -42,6 +42,9 @@ public final class CookBookToLatex {
 		.usePackage("tikz")
 		.usePackage("longtable")
 		.usePackage("graphicx")
+		.usePackage("eso-pic")
+		.usePackage("xcolor")
+		.usePackage("transparent")
 		.line(command("title", cookBook.name()))
 		.line(command("author", cookBook.author()))
 		.line(command("setlength", "\\parindent", "0cm"));
@@ -67,70 +70,35 @@ public final class CookBookToLatex {
 	final int numberOfGroups = recipesByGroupName.keySet()
 		.size();
 	latexDocument.line(command("frontmatter"))
-		.beginEnvironment("titlepage")
-		.line(command("centering"))
-		.format("\\fontsize{70}{84}\\selectfont")
+		.beginEnvironment("titlepage");
+	addBackground();
+	latexDocument.line(command("centering"))
+		.line(command("color", "white"))
+		.line(command("vspace*", command("fill")))
+		.format("\\fontsize{80}{96}\\selectfont")
 		.format("\\fontfamily{pzc}\\selectfont")
 		.format("%\\\\", cookBook.name())
-		.line(command("vspace", "0.8cm"))
+		.line(command("vspace", "0.5cm"))
 		.format("\\normalfont\\selectfont")
-		.line(command("Large"))
+		.format("\\fontsize{30}{36}\\selectfont")
+		.line(command("bfseries"))
 		.format("von\\\\")
 		.format("%\\\\", cookBook.author())
-		.line(command("vspace", "4cm"))
-		.line(command("Huge"))
+		.line(command("vspace", "1cm"))
 		.format("% Rezepte aus % Kategorien\\\\", numberOfRecipes, numberOfGroups)
-		.line(command("vfill"));
-	addSun();
-	latexDocument.line(command("vfill"))
-		.line(command("Large"))
+		.line(command("vspace", "0.3cm"))
 		.format("%", getDate())
+		.line(command("vspace*", command("fill")))
 		.endEnvironment("titlepage")
 		.line(command("tableofcontents"))
 		.line(command("mainmatter"));
     }
 
-    private void addSun() {
+    private void addBackground() {
 	latexDocument.plain("""
-		\\begin{tikzpicture}[scale=2]
-		\\def\\handleLeft{1.4}
-		\\def\\handleRight{1.6}
-		\\def\\handleTop{3}
-		\\def\\handleBottom{0}
-		\\def\\prongWidth{0.2}
-		\\def\\prongHeight{1} % prongs/spoon bowl height
-		\\def\\gap{0.1} % gap between prongs or parts
-		\\def\\cornerRadius{3pt} % for rounded corners
-		% Center of handle
-		\\pgfmathsetmacro{\\handleCenter}{(\\handleLeft + \\handleRight)/2}
-		% --- Draw spoon ---
-		\\pgfmathsetmacro{\\spoonShiftX}{1.8}  % reduced gap
-		% Spoon handle height reduced to 2 (from 3 to 1.9)
-		\\def\\spoonHandleBottom{-0.1} % handle bottom at -0.1, handle top at 3 → height 3.1, but visually 2 units handle height here
-		\\def\\spoonHandleTop{3}
-		% Spoon handle
-		\\fill[gray!30]
-		  (\\handleLeft + \\spoonShiftX, \\spoonHandleBottom) rectangle (\\handleRight + \\spoonShiftX, \\spoonHandleTop);
-		% Spoon bowl (ellipse), vertically centered at 3 (top), radius 0.7
-		\\fill[gray!50]
-		  ([shift={(\\handleCenter + \\spoonShiftX, 3)}]0,0) ellipse (0.5cm and 0.7cm);
-		% --- Draw knife ---
-		\\pgfmathsetmacro{\\knifeShiftX}{3}  % reduced gap
-		% Knife handle height reduced to 2
-		\\def\\knifeHandleBottom{1.35} % handle bottom at 0.8, top at 3 → height 2.2 units
-		\\def\\knifeHandleTop{-0.1}
-		% Knife handle
-		\\fill[gray!30]
-		  (\\handleLeft + \\knifeShiftX, \\knifeHandleBottom + 0.3) rectangle (\\handleRight + \\knifeShiftX, \\knifeHandleTop);
-		% Knife blade - rounded rectangle polygon of height 2 (same as handle height ~2.0)
-		\\fill[gray!60,rounded corners=2pt]
-		  ([shift={(\\handleCenter + \\knifeShiftX, \\knifeHandleBottom + 0.3)}] -0.15,0) --
-		  ++(0.3,0) -- ++(0,2.0) -- ++(-0.3,0) -- cycle;
-		% Smooth rounded edge using ellipse on knife blade's LEFT side
-		\\fill[gray!60]
-		  ([shift={(\\handleCenter + \\knifeShiftX - 0.1, \\knifeHandleBottom + 1.3)}]0,0) ellipse (0.15cm and 1.0cm);
-		\\end{tikzpicture}
-						""");
+		\\AddToShipoutPictureBG*{\\transparent{0.7}\\includegraphics[width=\\paperwidth,height=\\paperheight]{images/title-from-gpt.png}}
+				""");
+
     }
 
     private void addRecipes() {
