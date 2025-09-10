@@ -45,6 +45,7 @@ public final class CookBookToLatex {
 		.usePackage("eso-pic")
 		.usePackage("xcolor")
 		.usePackage("transparent")
+		.usePackage("hyperref", "hidelinks")
 		.line(command("title", cookBook.name()))
 		.line(command("author", cookBook.author()))
 		.line(command("setlength", "\\parindent", "0cm"));
