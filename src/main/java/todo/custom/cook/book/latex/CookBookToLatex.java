@@ -1,5 +1,7 @@
 package todo.custom.cook.book.latex;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,7 +46,6 @@ public final class CookBookToLatex {
 		.usePackage("graphicx")
 		.usePackage("eso-pic")
 		.usePackage("xcolor")
-		.usePackage("transparent")
 		.usePackage("hyperref", "hidelinks")
 		.line(command("title", cookBook.name()))
 		.line(command("author", cookBook.author()))
@@ -74,7 +75,7 @@ public final class CookBookToLatex {
 		.beginEnvironment("titlepage");
 	addBackground();
 	latexDocument.line(command("centering"))
-		.line(command("color", "white"))
+		.line(command("color", "orange"))
 		.line(command("vspace*", command("fill")))
 		.format("\\fontsize{80}{96}\\selectfont")
 		.format("\\fontfamily{pzc}\\selectfont")
@@ -96,10 +97,11 @@ public final class CookBookToLatex {
     }
 
     private void addBackground() {
-	latexDocument.plain("""
-		\\AddToShipoutPictureBG*{\\transparent{0.7}\\includegraphics[width=\\paperwidth,height=\\paperheight]{images/title-from-gpt.png}}
-				""");
-
+	if (Files.exists(Path.of("title.png"))) {
+	    latexDocument.plain("""
+	    	\\AddToShipoutPictureBG*{\\includegraphics[width=\\paperwidth,height=\\paperheight]{title.png}}
+	    			""");
+	}
     }
 
     private void addRecipes() {
