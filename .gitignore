@@ -1,6 +1,6 @@
 target/
 .settings/
-*.pdf
+generated-document.pdf
 *.json
 .classpath
 .project
