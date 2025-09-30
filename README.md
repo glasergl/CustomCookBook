@@ -9,3 +9,6 @@ Also, the recipe categories, the recipes inside a category and the ingredients o
 
 Note that adding an image `title.png` to the same level of the runnable `.jar` or `.exe` uses it as a background for the title page.
 A high quality DIN A4 background has the resolution `2480 x 3508` pixels.
+
+## !!Important!!
+The tool can only export to PDF if a LaTeX compiler, i.e., pdflatex, is globally installed on the system the tool is executed. For instance, via [MikTeX](https://miktex.org/).
